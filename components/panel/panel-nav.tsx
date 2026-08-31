@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { persistPanelNavCollapsed } from "@/lib/actions/ui-actions";
 
-const links = [
+const ALL_LINKS = [
   { href: "/panel", label: "Resumen", icon: LayoutDashboard },
   { href: "/panel/campeonatos", label: "Mis campeonatos", icon: Trophy },
-  { href: "/panel/usuarios", label: "Usuarios", icon: Users },
+  { href: "/panel/usuarios", label: "Usuarios", icon: Users, adminOnly: true },
 ];
 
 function isPathActive(pathname: string, href: string) {
@@ -86,10 +86,18 @@ function SignOutButton() {
   );
 }
 
-export function PanelNav({ defaultCollapsed = false }: { defaultCollapsed?: boolean }) {
+export function PanelNav({
+  defaultCollapsed = false,
+  user,
+}: {
+  defaultCollapsed?: boolean;
+  user: { name?: string | null; email?: string | null; role?: string | null };
+}) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const links = ALL_LINKS.filter((l) => !l.adminOnly || user.role === "ADMIN");
 
   const toggleCollapsed = () => {
     const next = !collapsed;
@@ -226,6 +234,13 @@ export function PanelNav({ defaultCollapsed = false }: { defaultCollapsed?: bool
         <div className="flex-1 overflow-y-auto">{railNav}</div>
 
         <div className={cn("flex flex-col gap-2 pb-4", collapsed ? "items-center px-0" : "px-3")}>
+          {!collapsed && (
+            <div className="mb-2 flex flex-col gap-0.5 rounded-lg border bg-accent/50 px-3 py-2 text-xs">
+              <span className="font-semibold truncate">{user.name}</span>
+              <span className="text-muted-foreground truncate">{user.email}</span>
+              <span className="mt-1 font-medium capitalize text-primary">{user.role?.toLowerCase()}</span>
+            </div>
+          )}
           {!collapsed && (
             <Button asChild variant="outline" size="sm">
               <Link href="/">Ver sitio público</Link>
