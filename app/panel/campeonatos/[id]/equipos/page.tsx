@@ -17,8 +17,10 @@ export default async function TeamsPage({ params }: { params: Promise<{ id: stri
       id: t.id,
       name: t.name,
       color: t.color,
+      shieldUrl: t.shieldUrl,
       status: t.status,
       captainName: t.captainName,
+      delegateName: t.delegateName,
       _count: { players: t._count.players },
     })),
   })) as CategoryWithTeams[];

@@ -32,6 +32,7 @@ export type TeamRow = {
   id: string;
   name: string;
   color: string | null;
+  shieldUrl: string | null;
   status: string;
   captainName: string | null;
   delegateName: string | null;
@@ -100,7 +101,12 @@ export function TeamManager({ tournamentId, categories }: { tournamentId: string
               <CardContent className="flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="size-8 shrink-0 rounded-lg border" style={{ background: t.color ?? "#64748b" }} />
+                    {t.shieldUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={t.shieldUrl} alt={t.name} className="size-8 shrink-0 rounded-lg border object-cover" />
+                    ) : (
+                      <span className="size-8 shrink-0 rounded-lg border" style={{ background: t.color ?? "#64748b" }} />
+                    )}
                     <div className="min-w-0">
                       <h3 className="truncate font-semibold">{t.name}</h3>
                       {t.captainName && <p className="text-muted-foreground text-xs">Capitán: {t.captainName}</p>}
@@ -152,7 +158,7 @@ function TeamFormDialog({
   onSubmit,
 }: {
   categoryId: string;
-  initial?: { name: string; color: string | null; captainName: string | null; delegateName: string | null; status?: string };
+  initial?: { name: string; color: string | null; shieldUrl: string | null; captainName: string | null; delegateName: string | null; status?: string };
   onSubmit: (v: TeamInput) => Promise<boolean>;
 }) {
   const [open, setOpen] = useState(false);
@@ -165,7 +171,7 @@ function TeamFormDialog({
   } = useForm<TeamInput>({
     resolver: zodResolver(teamSchema) as Resolver<TeamInput>,
     defaultValues: initial
-      ? ({ ...initial, categoryId, shieldUrl: "", color: initial.color ?? "" } as TeamInput)
+      ? ({ ...initial, categoryId, shieldUrl: initial.shieldUrl ?? "", color: initial.color ?? "", captainName: initial.captainName ?? "", delegateName: initial.delegateName ?? "" } as TeamInput)
       : { categoryId, name: "", color: "", shieldUrl: "", captainName: "", delegateName: "" },
   });
 
