@@ -75,15 +75,54 @@ export function UserManager({ users, selfId }: { users: UserRow[]; selfId: strin
   );
 }
 
+/**
+ * Genera un email sugerido a partir del nombre completo.
+ * Ejemplos:
+ *   "Carlos Mamani Quispe" → "carlosquispe@campeonatos.bo"
+ *   "Juan Perez"           → "juanperez@campeonatos.bo"
+ *   "Ana Maria Rodriguez Lopez" → "analopez@campeonatos.bo"
+ */
+function normalize(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // eliminar tildes
+    .replace(/[^a-zA-Z0-9]/g, "")   // eliminar caracteres especiales
+    .toLowerCase();
+}
+
+function generateEmail(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "";
+  const first = normalize(parts[0]);
+  const last = parts.length > 1 ? normalize(parts[parts.length - 1]) : "";
+  const local = last ? `${first}${last}` : first;
+  if (!local) return "";
+  return `${local}@campeonatos.bo`;
+}
+
 function CreateUserDialog({ onDone }: { onDone: () => void }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<UserCreateInput>({ resolver: zodResolver(userCreateSchema) });
+
+  const nameValue = watch("name", "");
+  const emailValue = watch("email", "");
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value;
+    setValue("name", name);
+    if (!emailTouched) {
+      setValue("email", generateEmail(name));
+    }
+  };
 
   const onSave = handleSubmit(async (values) => {
     setLoading(true);
@@ -95,6 +134,7 @@ function CreateUserDialog({ onDone }: { onDone: () => void }) {
     }
     setOpen(false);
     reset();
+    setEmailTouched(false);
     onDone();
   });
 
@@ -103,7 +143,7 @@ function CreateUserDialog({ onDone }: { onDone: () => void }) {
       open={open}
       onOpenChange={(v) => {
         setOpen(v);
-        if (!v) reset();
+        if (!v) { reset(); setEmailTouched(false); }
       }}
     >
       <DialogTrigger asChild>
@@ -117,13 +157,29 @@ function CreateUserDialog({ onDone }: { onDone: () => void }) {
         </DialogHeader>
         <form onSubmit={onSave} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label>Nombre *</Label>
-            <Input {...register("name")} />
+            <Label>Nombre completo *</Label>
+            <Input
+              value={nameValue}
+              onChange={handleNameChange}
+              placeholder="Carlos Mamani Quispe"
+            />
             {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label>Email *</Label>
-            <Input type="email" {...register("email")} />
+            <Input
+              type="email"
+              value={emailValue}
+              {...register("email")}
+              onChange={(e) => {
+                setEmailTouched(true);
+                setValue("email", e.target.value);
+              }}
+              placeholder="carlosquispe@campeonatos.bo"
+            />
+            {!emailTouched && emailValue && (
+              <p className="text-muted-foreground text-xs">✨ Generado automáticamente — puedes editarlo</p>
+            )}
             {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
           </div>
           <div className="flex flex-col gap-2">
