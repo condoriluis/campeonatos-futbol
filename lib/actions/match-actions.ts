@@ -586,7 +586,7 @@ async function maybeFinalizePhaseAndChampion(phaseId: string, tournamentId: stri
         homeLoserPreviousMatchId: null,
         awayLoserPreviousMatchId: null,
       },
-      orderBy: { order: "asc" },
+      orderBy: [{ jornada: "desc" }, { id: "desc" }],
     });
     if (last && last.id === phaseId && finalMatch?.winnerId) {
       await db.category.update({

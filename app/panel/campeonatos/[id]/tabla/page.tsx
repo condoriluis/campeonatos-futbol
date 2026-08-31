@@ -28,6 +28,22 @@ export default async function StandingsPage({
   if (!phases.some((p) => p.id === selected)) selected = phases[0]?.id;
 
   const options: PhaseOption[] = phases.map((p) => ({ id: p.id, label: p.label }));
+  const selectedPhase = phases.find((p) => p.id === selected);
+
+  if (selectedPhase?.type === "LLAVES") {
+    return (
+      <div>
+        <h2 className="mb-4 text-lg font-semibold">Tabla de posiciones</h2>
+        <PhaseSwitcher phases={options} value={selected ?? ""} />
+        <Card className="mt-4">
+          <CardContent className="py-10 text-center text-muted-foreground">
+            Esta fase es de eliminación directa (Llaves). Las posiciones se definen por el avance en el cuadro de partidos.
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const data = selected ? await computeGroupStandingsData(selected) : null;
 
   if (!data || data.groups.length === 0) {
@@ -146,12 +162,12 @@ export default async function StandingsPage({
   );
 }
 
-async function getAllPhases(tournamentId: string): Promise<{ id: string; label: string }[]> {
+async function getAllPhases(tournamentId: string): Promise<{ id: string; label: string; type: string }[]> {
   const categories = await import("@/lib/actions/category-actions").then((m) => m.getCategoriesWithTeams(tournamentId));
-  const out: { id: string; label: string }[] = [];
+  const out: { id: string; label: string; type: string }[] = [];
   for (const cat of categories) {
     const phases = await listPhases(cat.id);
-    for (const p of phases) out.push({ id: p.id, label: `${cat.name} · ${p.name}` });
+    for (const p of phases) out.push({ id: p.id, label: `${cat.name} · ${p.name}`, type: p.type });
   }
   return out;
 }
