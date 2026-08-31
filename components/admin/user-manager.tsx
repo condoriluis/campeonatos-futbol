@@ -42,30 +42,32 @@ export function UserManager({ users, selfId }: { users: UserRow[]; selfId: strin
       </div>
       <div className="grid gap-2">
         {users.map((u) => (
-          <div key={u.id} className="flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2">
+          <div key={u.id} className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border px-3 py-2">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">
                 {u.name}
                 {u.id === selfId && <span className="text-muted-foreground text-xs"> (tú)</span>}
               </p>
-              <p className="text-muted-foreground text-xs">{u.email}</p>
+              <p className="truncate text-muted-foreground text-xs">{u.email}</p>
             </div>
-            <Badge variant={roleBadge[u.role] ?? "outline"}>{u.role}</Badge>
-            <Badge variant={u.isActive ? "success" : "destructive"}>{u.isActive ? "Activo" : "Desactivado"}</Badge>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                const res = await updateUser({ id: u.id, isActive: !u.isActive });
-                if (!res.success) {
-                  toast.error(res.error ?? "No se pudo actualizar");
-                  return;
-                }
-                refresh();
-              }}
-            >
-              {u.isActive ? "Desactivar" : "Activar"}
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={roleBadge[u.role] ?? "outline"}>{u.role}</Badge>
+              <Badge variant={u.isActive ? "success" : "destructive"}>{u.isActive ? "Activo" : "Desactivado"}</Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const res = await updateUser({ id: u.id, isActive: !u.isActive });
+                  if (!res.success) {
+                    toast.error(res.error ?? "No se pudo actualizar");
+                    return;
+                  }
+                  refresh();
+                }}
+              >
+                {u.isActive ? "Desactivar" : "Activar"}
+              </Button>
+            </div>
           </div>
         ))}
       </div>
