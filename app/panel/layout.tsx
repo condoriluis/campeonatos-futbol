@@ -10,7 +10,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const collapsedPref = (await cookies()).get("panel_nav_collapsed")?.value === "1";
 
   return (
-    <div className="flex min-h-dvh">
+    <div className="flex min-h-dvh flex-col lg:flex-row">
       <PanelNav defaultCollapsed={collapsedPref} />
       <main className="mx-auto w-full max-w-6xl flex-1 p-4 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:p-6 lg:pb-6">{children}</main>
     </div>
