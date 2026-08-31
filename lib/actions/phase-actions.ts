@@ -6,8 +6,10 @@ import { requireTournamentEditor, ok, safeResult } from "@/lib/actions/helpers";
 import { auditLog } from "@/lib/audit";
 import { revalidatePath } from "next/cache";
 
-export async function revalidateTournament(tournamentId: string) {
-  revalidatePath(`/panel/campeonatos/${tournamentId}`);
+export async function revalidateTournament(tournamentId: string, slug?: string) {
+  revalidatePath("/panel", "layout");          // invalida todo el panel
+  revalidatePath(`/panel/campeonatos/${tournamentId}`, "layout"); // y la rama del torneo
+  if (slug) revalidatePath(`/t/${slug}`, "layout"); // página pública
 }
 
 export async function listPhases(categoryId: string) {

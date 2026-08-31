@@ -66,7 +66,7 @@ export async function saveRules(tournamentId: string, input: unknown) {
       entityId: rules.id,
       details: { ...parsed.data },
     });
-    revalidatePath(`/panel/campeonatos/${tournamentId}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(rules);
   } catch (error) {
     return safeResult(error);

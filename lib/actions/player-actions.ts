@@ -32,7 +32,7 @@ export async function createPlayer(input: unknown) {
       entity: "Player",
       entityId: player.id,
     });
-    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(player);
   } catch (error) {
     return safeResult(error);
@@ -59,7 +59,7 @@ export async function updatePlayer(id: string, input: unknown) {
       entity: "Player",
       entityId: id,
     });
-    revalidatePath(`/panel/campeonatos/${player.team.category.tournamentId}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -86,7 +86,7 @@ export async function togglePlayerStatus(id: string) {
       entityId: id,
       details: { status: updated.status },
     });
-    revalidatePath(`/panel/campeonatos/${player.team.category.tournamentId}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -109,7 +109,7 @@ export async function deletePlayer(id: string) {
       entity: "Player",
       entityId: id,
     });
-    revalidatePath(`/panel/campeonatos/${player.team.category.tournamentId}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok();
   } catch (error) {
     return safeResult(error);
@@ -151,7 +151,7 @@ export async function bulkCreatePlayers(input: unknown) {
       entityId: teamId,
       details: { count: result.count },
     });
-    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok({ count: result.count });
   } catch (error) {
     return safeResult(error);

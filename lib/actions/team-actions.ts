@@ -43,7 +43,8 @@ export async function createTeam(input: unknown) {
       entityId: team.id,
       details: { name: team.name },
     });
-    revalidatePath(`/panel/campeonatos/${category.tournamentId}`);
+    revalidatePath("/panel", "layout");
+    revalidatePath(`/panel/campeonatos/${category.tournamentId}`, "layout");
     return ok(team);
   } catch (error) {
     return safeResult(error);
@@ -67,7 +68,8 @@ export async function updateTeam(id: string, input: unknown) {
       entity: "Team",
       entityId: id,
     });
-    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`);
+    revalidatePath("/panel", "layout");
+    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -99,7 +101,8 @@ export async function changeTeamStatus(id: string, status: "ACTIVO" | "SUSPENDID
       entityId: id,
       details: { status },
     });
-    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`);
+    revalidatePath("/panel", "layout");
+    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -125,7 +128,8 @@ export async function deleteTeam(id: string) {
       entity: "Team",
       entityId: id,
     });
-    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`);
+    revalidatePath("/panel", "layout");
+    revalidatePath(`/panel/campeonatos/${team.category.tournamentId}`, "layout");
     return ok();
   } catch (error) {
     return safeResult(error);

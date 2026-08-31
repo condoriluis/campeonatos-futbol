@@ -3,7 +3,6 @@ import { getTournamentById } from "@/lib/actions/tournament-actions";
 import { getCategoriesWithTeams } from "@/lib/actions/category-actions";
 import { TeamManager, type CategoryWithTeams } from "@/components/tournament/team-manager";
 
-export const dynamic = "force-dynamic";
 
 export default async function TeamsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

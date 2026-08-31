@@ -94,7 +94,7 @@ export async function createTournament(input: unknown) {
       entity: "Tournament",
       entityId: tournament.id,
     });
-    revalidatePath("/panel");
+    revalidatePath("/panel", "layout");
     return ok({ ...tournament, slug });
   } catch (error) {
     return safeResult(error);
@@ -130,7 +130,7 @@ export async function updateTournament(id: string, input: unknown) {
       entityId: id,
       details: { changes: data },
     });
-    revalidatePath(`/panel/campeonatos/${id}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -156,7 +156,7 @@ export async function changeTournamentStatus(id: string, input: unknown) {
       entityId: id,
       details: { status: parsed.data.status },
     });
-    revalidatePath(`/panel/campeonatos/${id}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -173,7 +173,7 @@ export async function deleteTournament(id: string) {
       entity: "Tournament",
       entityId: id,
     });
-    revalidatePath("/panel");
+    revalidatePath("/panel", "layout");
     return ok();
   } catch (error) {
     return safeResult(error);
@@ -196,7 +196,7 @@ export async function setCategoryChampion(id: string, categoryId: string, champi
       entityId: categoryId,
       details: { championTeamId },
     });
-    revalidatePath(`/panel/campeonatos/${id}`);
+    revalidatePath("/panel", "layout"); revalidatePath(`/panel/campeonatos/${id}`, "layout");
     return ok(updated);
   } catch (error) {
     return safeResult(error);

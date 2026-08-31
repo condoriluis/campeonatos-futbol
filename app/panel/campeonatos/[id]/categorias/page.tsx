@@ -3,7 +3,6 @@ import { getTournamentById } from "@/lib/actions/tournament-actions";
 import { getCategoriesWithTeams } from "@/lib/actions/category-actions";
 import { CategoryManager, type CategoryRow } from "@/components/tournament/category-manager";
 
-export const dynamic = "force-dynamic";
 
 export default async function CategoriesPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

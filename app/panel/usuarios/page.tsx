@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { listUsers, getCurrentUser } from "@/lib/actions/auth-actions";
 import { UserManager, type UserRow } from "@/components/admin/user-manager";
 
-export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
   const session = await auth();

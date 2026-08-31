@@ -7,7 +7,6 @@ import { PlayerManager, type PlayerRow } from "@/components/tournament/player-ma
 import { RosterAccessPanel } from "@/components/roster/roster-access-panel";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-dynamic";
 
 export default async function TeamPlayersPage({
   params,

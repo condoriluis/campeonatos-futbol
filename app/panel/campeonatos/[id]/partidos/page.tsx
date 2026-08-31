@@ -11,7 +11,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
 
 export default async function MatchesPage({
   params,

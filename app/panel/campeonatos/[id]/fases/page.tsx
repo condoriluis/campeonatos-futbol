@@ -5,7 +5,6 @@ import { listPhases } from "@/lib/actions/phase-actions";
 import { PhaseManager, type PhaseCategory } from "@/components/tournament/phase-manager";
 import type { GroupRow, PhaseRow, TeamOption } from "@/components/tournament/types";
 
-export const dynamic = "force-dynamic";
 
 export default async function PhasesPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -6,8 +6,9 @@ import { requireTournamentEditor, ok, safeResult } from "@/lib/actions/helpers";
 import { auditLog } from "@/lib/audit";
 import { revalidatePath } from "next/cache";
 
-function revalidateCat(categoryId: string) {
-  revalidatePath(`/panel/campeonatos/${categoryId}`);
+function revalidateCat(tournamentId: string) {
+  revalidatePath("/panel", "layout");
+  revalidatePath(`/panel/campeonatos/${tournamentId}`, "layout");
 }
 
 export async function createCategory(input: unknown) {
