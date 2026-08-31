@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, ChevronDown, Shield } from "lucide-react";
 import { userCreateSchema, type UserCreateInput } from "@/lib/validations/auth";
 import { createUser, updateUser } from "@/lib/actions/auth-actions";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,78 @@ const roleBadge: Record<string, "default" | "secondary" | "outline" | "success">
   OPERADOR: "outline",
 };
 
+const ROLES_INFO = [
+  {
+    role: "Administrador",
+    badge: "default" as const,
+    color: "bg-primary/10 text-primary",
+    perms: [
+      "Gestiona todos los usuarios del sistema",
+      "Ve y edita cualquier campeonato",
+      "Puede operar cualquier partido sin asignación",
+      "Acceso total sin restricciones",
+    ],
+  },
+  {
+    role: "Organizador",
+    badge: "success" as const,
+    color: "bg-green-500/10 text-green-700 dark:text-green-400",
+    perms: [
+      "Crea y gestiona sus propios campeonatos",
+      "Administra categorías, equipos y fases",
+      "Puede operar cualquier partido sin asignación",
+      "No puede gestionar usuarios",
+    ],
+  },
+  {
+    role: "Operador / Mesa",
+    badge: "outline" as const,
+    color: "bg-muted text-muted-foreground",
+    perms: [
+      "Opera partidos que le sean asignados",
+      "Registra goles, tarjetas y eventos en vivo",
+      "Ve todos los campeonatos (solo lectura)",
+      "No puede crear ni editar campeonatos",
+    ],
+  },
+];
+
+function RolesInfo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-lg border bg-card">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium hover:bg-muted/50 transition-colors rounded-lg"
+      >
+        <span className="flex items-center gap-2 text-muted-foreground">
+          <Shield className="size-4" />
+          ¿Qué puede hacer cada rol?
+        </span>
+        <ChevronDown className={`size-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="border-t px-4 pb-4 pt-3 grid gap-3 sm:grid-cols-3">
+          {ROLES_INFO.map((r) => (
+            <div key={r.role} className={`rounded-lg p-3 ${r.color}`}>
+              <p className="font-semibold text-sm mb-2">{r.role}</p>
+              <ul className="flex flex-col gap-1">
+                {r.perms.map((p) => (
+                  <li key={p} className="text-xs flex items-start gap-1.5">
+                    <span className="mt-0.5 shrink-0">·</span>
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function UserManager({ users, selfId }: { users: UserRow[]; selfId: string }) {
   const router = useRouter();
   const refresh = () => router.refresh();
@@ -40,6 +112,7 @@ export function UserManager({ users, selfId }: { users: UserRow[]; selfId: strin
         <p className="text-muted-foreground text-sm">Administra operadores y organizadores del sistema.</p>
         <CreateUserDialog onDone={() => { toast.success("Usuario creado"); refresh(); }} />
       </div>
+      <RolesInfo />
       <div className="grid gap-2">
         {users.map((u) => (
           <div key={u.id} className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border px-3 py-2">
