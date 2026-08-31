@@ -222,6 +222,8 @@ model Team {
   events       MatchEvent[]
   standings    Standing[]
   order        Int          @default(0)
+  rosterToken  String?      @unique
+  rosterPin    String?      // 4 digits, stored plain (token in URL is first factor)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 

@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
 import { getPlayers } from "@/lib/actions/player-actions";
 import { PlayerManager, type PlayerRow } from "@/components/tournament/player-manager";
+import { RosterAccessPanel } from "@/components/roster/roster-access-panel";
 import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +15,10 @@ export default async function TeamPlayersPage({
   params: Promise<{ id: string; teamId: string }>;
 }) {
   const { id, teamId } = await params;
-  const team = await db.team.findUnique({ where: { id: teamId } });
+  const team = await db.team.findUnique({
+    where: { id: teamId },
+    select: { id: true, name: true, rosterToken: true, rosterPin: true },
+  });
   if (!team) notFound();
 
   const players = (await getPlayers(teamId)).map((p) => ({
@@ -34,6 +38,7 @@ export default async function TeamPlayersPage({
         </Link>
       </Button>
       <PlayerManager teamId={teamId} teamName={team.name} players={players} />
+      <RosterAccessPanel teamId={teamId} token={team.rosterToken} pin={team.rosterPin} />
     </div>
   );
 }
