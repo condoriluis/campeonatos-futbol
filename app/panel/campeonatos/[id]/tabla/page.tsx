@@ -5,6 +5,7 @@ import { listPhases } from "@/lib/actions/phase-actions";
 import { PhaseSwitcher, type PhaseOption } from "@/components/tournament/phase-switcher";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -74,37 +75,70 @@ export default async function StandingsPage({
         {data.groups.map((g) => (
           <Card key={g.groupId} className="gap-0 overflow-hidden p-0">
             <div className="border-b px-4 py-3 font-semibold">Grupo {g.groupName}</div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-8 text-center">#</TableHead>
-                  <TableHead>Equipo</TableHead>
-                  <TableHead className="text-center">PJ</TableHead>
-                  <TableHead className="text-center">G</TableHead>
-                  <TableHead className="text-center">E</TableHead>
-                  <TableHead className="text-center">P</TableHead>
-                  <TableHead className="text-center">DG</TableHead>
-                  <TableHead className="text-right">Pts</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {g.rows.map((r) => (
-                  <TableRow key={r.teamId}>
-                    <TableCell className="text-center font-bold">{r.position}</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <span className="size-3 rounded-full" style={{ background: r.teamColor ?? "#94a3b8" }} />
-                      <span className="truncate">{r.teamName}</span>
-                    </TableCell>
-                    <TableCell className="text-center">{r.played}</TableCell>
-                    <TableCell className="text-center">{r.won}</TableCell>
-                    <TableCell className="text-center">{r.drawn}</TableCell>
-                    <TableCell className="text-center">{r.lost}</TableCell>
-                    <TableCell className="text-center">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</TableCell>
-                    <TableCell className="text-right font-bold">{r.points}</TableCell>
+            <TooltipProvider delayDuration={100}>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-8 text-center">#</TableHead>
+                    <TableHead>Equipo</TableHead>
+                    <TableHead className="text-center">
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help underline decoration-dashed underline-offset-2">PJ</TooltipTrigger>
+                        <TooltipContent>Partidos Jugados</TooltipContent>
+                      </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help underline decoration-dashed underline-offset-2">G</TooltipTrigger>
+                        <TooltipContent>Partidos Ganados</TooltipContent>
+                      </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help underline decoration-dashed underline-offset-2">E</TooltipTrigger>
+                        <TooltipContent>Partidos Empatados</TooltipContent>
+                      </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help underline decoration-dashed underline-offset-2">P</TooltipTrigger>
+                        <TooltipContent>Partidos Perdidos</TooltipContent>
+                      </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help underline decoration-dashed underline-offset-2">DG</TooltipTrigger>
+                        <TooltipContent>Diferencia de Goles</TooltipContent>
+                      </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help underline decoration-dashed underline-offset-2">Pts</TooltipTrigger>
+                        <TooltipContent>Puntos</TooltipContent>
+                      </Tooltip>
+                    </TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+
+                <TableBody>
+                  {g.rows.map((r) => (
+                    <TableRow key={r.teamId}>
+                      <TableCell className="text-center font-bold">{r.position}</TableCell>
+                      <TableCell className="flex items-center gap-2">
+                        <span className="size-3 rounded-full" style={{ background: r.teamColor ?? "#94a3b8" }} />
+                        <span className="truncate">{r.teamName}</span>
+                      </TableCell>
+                      <TableCell className="text-center">{r.played}</TableCell>
+                      <TableCell className="text-center">{r.won}</TableCell>
+                      <TableCell className="text-center">{r.drawn}</TableCell>
+                      <TableCell className="text-center">{r.lost}</TableCell>
+                      <TableCell className="text-center">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</TableCell>
+                      <TableCell className="text-right font-bold">{r.points}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TooltipProvider>
           </Card>
         ))}
       </div>

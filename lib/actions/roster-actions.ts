@@ -126,6 +126,7 @@ export async function rosterCreatePlayer(token: string, input: unknown) {
     const parsed = playerSchema.safeParse({ ...(input as object), teamId: session.teamId });
     if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
     const player = await db.player.create({ data: parsed.data });
+    revalidatePath(`/nomina/${token}`);
     return ok(player);
   } catch (error) {
     return safeResult(error);
@@ -143,6 +144,7 @@ export async function rosterUpdatePlayer(token: string, playerId: string, input:
     const parsed = playerSchema.safeParse({ ...(input as object), teamId: session.teamId });
     if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
     const updated = await db.player.update({ where: { id: playerId }, data: parsed.data });
+    revalidatePath(`/nomina/${token}`);
     return ok(updated);
   } catch (error) {
     return safeResult(error);
@@ -157,6 +159,7 @@ export async function rosterDeletePlayer(token: string, playerId: string) {
       return { success: false as const, error: "Jugador no encontrado" };
     }
     await db.player.delete({ where: { id: playerId } });
+    revalidatePath(`/nomina/${token}`);
     return ok();
   } catch (error) {
     return safeResult(error);

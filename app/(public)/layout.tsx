@@ -3,6 +3,7 @@ import { Trophy } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/actions/auth-actions";
+import { HeaderActions } from "./header-actions";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -18,15 +19,7 @@ export default async function PublicLayout({ children }: { children: React.React
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            {user ? (
-              <Button asChild size="sm">
-                <Link href="/panel">Panel</Link>
-              </Button>
-            ) : (
-              <Button asChild size="sm" variant="outline">
-                <Link href="/login">Ingresar</Link>
-              </Button>
-            )}
+            <HeaderActions isLoggedIn={!!user} />
           </div>
         </div>
       </header>
