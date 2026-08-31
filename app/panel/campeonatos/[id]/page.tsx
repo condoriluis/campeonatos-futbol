@@ -78,16 +78,19 @@ export default async function TournamentOverview({ params }: { params: Promise<{
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             {detail.categories.length === 0 ? (
-               <p className="text-muted-foreground text-sm">No hay categorías.</p>
-            ) : detail.categories.every((c) => !c.championTeam) ? (
-              <p className="text-muted-foreground text-sm">Aún no hay campeones. El sistema los proclama al finalizar la última fase de cada categoría.</p>
+              <p className="text-muted-foreground text-sm">No hay categorías.</p>
             ) : (
               detail.categories.map((c) => (
-                <div key={c.id} className="rounded-md border bg-muted/40 px-3 py-2">
-                  <p className="text-xs text-muted-foreground">{c.name}</p>
-                  <p className="text-sm font-bold">
-                    {c.championTeam ? c.championTeam.name : "Por definir"}
-                  </p>
+                <div key={c.id} className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground mb-0.5">{c.name}</p>
+                  {c.championTeam ? (
+                    <div className="flex items-center gap-2">
+                      <Trophy className="size-3 text-amber-500" />
+                      <p className="text-sm font-bold">{c.championTeam.name}</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic">Por definir</p>
+                  )}
                 </div>
               ))
             )}
