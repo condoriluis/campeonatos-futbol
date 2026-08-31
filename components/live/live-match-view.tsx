@@ -269,10 +269,10 @@ function LiveControls({
           {/* Botones por equipo */}
           <div className="grid grid-cols-2 gap-3">
             {homeId && (
-              <TeamActions teamId={homeId} teamName={m.homeTeam?.name ?? "Local"} matchId={m.id} onDone={onDone} />
+              <TeamActions teamId={homeId} teamName={m.homeTeam?.name ?? "Local"} teamColor={m.homeTeam?.color} matchId={m.id} onDone={onDone} />
             )}
             {awayId && (
-              <TeamActions teamId={awayId} teamName={m.awayTeam?.name ?? "Visita"} matchId={m.id} onDone={onDone} />
+              <TeamActions teamId={awayId} teamName={m.awayTeam?.name ?? "Visita"} teamColor={m.awayTeam?.color} matchId={m.id} onDone={onDone} />
             )}
           </div>
 
@@ -362,21 +362,31 @@ function LiveControls({
 function TeamActions({
   teamId,
   teamName,
+  teamColor,
   matchId,
   onDone,
 }: {
   teamId: string;
   teamName: string;
+  teamColor?: string | null;
   matchId: string;
   onDone: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border p-2">
-      <p className="truncate text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-        {teamName}
-      </p>
+    <div className="flex flex-col gap-2 rounded-lg border p-2.5 relative overflow-hidden">
+      {teamColor && (
+        <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: teamColor }} />
+      )}
+      <div className="flex items-center gap-1.5 pl-1 mb-1">
+        {teamColor && (
+          <div className="size-3 rounded-full shrink-0 border shadow-sm" style={{ backgroundColor: teamColor }} />
+        )}
+        <p className="truncate text-xs font-bold text-muted-foreground uppercase tracking-wide">
+          {teamName}
+        </p>
+      </div>
       {eventType.map((type) => (
-        <EventDialog key={type} type={type} teamId={teamId} teamName={teamName} matchId={matchId} onDone={onDone} />
+        <EventDialog key={type} type={type} teamId={teamId} teamName={teamName} teamColor={teamColor} matchId={matchId} onDone={onDone} />
       ))}
     </div>
   );
@@ -386,12 +396,14 @@ function EventDialog({
   type,
   teamId,
   teamName,
+  teamColor,
   matchId,
   onDone,
 }: {
   type: (typeof eventType)[number];
   teamId: string;
   teamName: string;
+  teamColor?: string | null;
   matchId: string;
   onDone: () => void;
 }) {
@@ -399,6 +411,7 @@ function EventDialog({
   const [loading, setLoading] = useState(false);
   const [players, setPlayers] = useState<PlayerRow[]>([]);
   const [playerId, setPlayerId] = useState("");
+
   const [minute, setMinute] = useState("");
 
   const openDialog = async (v: boolean) => {
@@ -446,7 +459,14 @@ function EventDialog({
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>{label} · {teamName}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            {label}
+            <span className="text-muted-foreground font-normal">·</span>
+            {teamColor && (
+              <span className="size-3 rounded-full border shadow-sm" style={{ backgroundColor: teamColor }} />
+            )}
+            <span>{teamName}</span>
+          </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">

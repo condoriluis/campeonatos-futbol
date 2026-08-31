@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield } from "lucide-react";
 
-export function RosterPinForm({ token, teamName, tournament, category }: {
+export function RosterPinForm({ token, teamName, teamColor, teamShield, tournament, category }: {
   token: string;
   teamName: string;
+  teamColor?: string | null;
+  teamShield?: string | null;
   tournament: string;
   category: string;
 }) {
@@ -67,9 +69,21 @@ export function RosterPinForm({ token, teamName, tournament, category }: {
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-4">
       <Card className="w-full max-w-sm shadow-lg">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-primary/10">
-            <Shield className="size-7 text-primary" />
+        <CardHeader className="text-center relative overflow-hidden">
+          {teamColor && (
+            <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: teamColor }} />
+          )}
+          <div className="mx-auto mt-2 mb-2 flex size-16 items-center justify-center rounded-xl bg-muted/50 border shadow-sm">
+            {teamShield ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={teamShield} alt={teamName} className="size-14 rounded-lg object-contain bg-white" />
+            ) : teamColor ? (
+              <div className="flex size-14 items-center justify-center rounded-lg font-bold text-white text-2xl" style={{ backgroundColor: teamColor }}>
+                {teamName.charAt(0).toUpperCase()}
+              </div>
+            ) : (
+              <Shield className="size-8 text-primary/40" />
+            )}
           </div>
           <CardTitle className="text-xl">Acceso de Delegado</CardTitle>
           <CardDescription className="space-y-0.5">

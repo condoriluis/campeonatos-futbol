@@ -15,6 +15,8 @@ export default async function RosterPage({ params }: { params: Promise<{ token: 
     select: {
       id: true,
       name: true,
+      color: true,
+      shieldUrl: true,
       rosterPin: true,
       category: {
         select: {
@@ -35,6 +37,8 @@ export default async function RosterPage({ params }: { params: Promise<{ token: 
       <RosterPinForm
         token={token}
         teamName={team.name}
+        teamColor={team.color}
+        teamShield={team.shieldUrl}
         tournament={team.category.tournament.name}
         category={team.category.name}
       />
@@ -48,6 +52,8 @@ export default async function RosterPage({ params }: { params: Promise<{ token: 
     <RosterPlayerManager
       token={token}
       teamName={team.name}
+      teamColor={team.color}
+      teamShield={team.shieldUrl}
       initialPlayers={players}
     />
   );

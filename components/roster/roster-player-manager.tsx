@@ -38,9 +38,11 @@ type PlayerForm = {
   isCaptain: boolean;
 };
 
-export function RosterPlayerManager({ token, teamName, initialPlayers }: {
+export function RosterPlayerManager({ token, teamName, teamColor, teamShield, initialPlayers }: {
   token: string;
   teamName: string;
+  teamColor?: string | null;
+  teamShield?: string | null;
   initialPlayers: Player[];
 }) {
   const router = useRouter();
@@ -48,10 +50,23 @@ export function RosterPlayerManager({ token, teamName, initialPlayers }: {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card p-4">
-        <div>
-          <h1 className="text-lg font-bold">{teamName}</h1>
-          <p className="text-xs text-muted-foreground">Gestión de nómina — delegado</p>
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-card p-4 relative overflow-hidden shadow-sm">
+        {teamColor && (
+          <div className="absolute left-0 top-0 bottom-0 w-2" style={{ backgroundColor: teamColor }} />
+        )}
+        <div className="flex items-center gap-4 pl-2">
+          {teamShield ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={teamShield} alt={teamName} className="size-12 rounded-md object-contain bg-white p-1 border shadow-sm" />
+          ) : teamColor ? (
+            <div className="size-12 rounded-md border shadow-sm flex shrink-0 items-center justify-center font-bold text-white text-xl" style={{ backgroundColor: teamColor }}>
+              {teamName.charAt(0).toUpperCase()}
+            </div>
+          ) : null}
+          <div>
+            <h1 className="text-xl font-bold leading-tight">{teamName}</h1>
+            <p className="text-sm text-muted-foreground">Gestión de nómina — delegado</p>
+          </div>
         </div>
         <RosterPlayerFormDialog token={token} onDone={refresh} />
       </div>
@@ -87,7 +102,7 @@ export function RosterPlayerManager({ token, teamName, initialPlayers }: {
       )}
 
       <p className="text-center text-xs text-muted-foreground">
-        Acceso válido por 24 horas · Solo puedes gestionar tu propia nómina
+        Acceso válido por 24 horas · Gestiona la nómina de tu equipo
       </p>
     </div>
   );
