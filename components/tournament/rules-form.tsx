@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useWatch, type Resolver } from "react-hook-form";
+import { useForm, useWatch, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { rulesSchema, type RulesInput } from "@/lib/validations/tournament";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const tiebreakerOptions = [
   { value: "PUNTOS", label: "Puntos" },
@@ -54,15 +55,29 @@ export function RulesForm({ tournamentId, initial }: { tournamentId: string; ini
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
+      {/* Partido */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold">Partido</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <NumberField label="Duración (min)" {...register("durationMinutes")} />
           <NumberField label="Descanso (min)" {...register("breakMinutes")} />
         </div>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" {...register("overtimeEnabled")} /> Tiempo extra (prórroga)
-        </label>
+        <div className="flex items-center gap-2">
+          <Controller
+            control={control}
+            name="overtimeEnabled"
+            render={({ field }) => (
+              <Checkbox
+                id="overtimeEnabled"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <label htmlFor="overtimeEnabled" className="cursor-pointer select-none text-sm">
+            Tiempo extra (prórroga)
+          </label>
+        </div>
         {overtimeEnabled && (
           <div className="pl-6">
             <NumberField label="Tiempo extra (min)" {...register("overtimeMinutes")} />
@@ -70,6 +85,7 @@ export function RulesForm({ tournamentId, initial }: { tournamentId: string; ini
         )}
       </section>
 
+      {/* Puntuación */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold">Puntuación</h3>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -79,21 +95,49 @@ export function RulesForm({ tournamentId, initial }: { tournamentId: string; ini
         </div>
       </section>
 
+      {/* Penales */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold">Penales</h3>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" {...register("penaltiesEnabled")} /> Definir por penales
-        </label>
+        <div className="flex items-center gap-2">
+          <Controller
+            control={control}
+            name="penaltiesEnabled"
+            render={({ field }) => (
+              <Checkbox
+                id="penaltiesEnabled"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <label htmlFor="penaltiesEnabled" className="cursor-pointer select-none text-sm">
+            Definir por penales
+          </label>
+        </div>
         {penaltiesEnabled && (
-          <div className="flex flex-col gap-4 pl-6 sm:flex-row">
+          <div className="flex flex-col gap-4 pl-6 sm:flex-row sm:items-center">
             <NumberField label="Tiros" {...register("penaltiesCount")} />
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" {...register("penaltiesOvertime")} /> Solo tras prórroga
-            </label>
+            <div className="flex items-center gap-2">
+              <Controller
+                control={control}
+                name="penaltiesOvertime"
+                render={({ field }) => (
+                  <Checkbox
+                    id="penaltiesOvertime"
+                    checked={!!field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
+              />
+              <label htmlFor="penaltiesOvertime" className="cursor-pointer select-none text-sm">
+                Solo tras prórroga
+              </label>
+            </div>
           </div>
         )}
       </section>
 
+      {/* Nómina */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold">Nómina</h3>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -103,29 +147,48 @@ export function RulesForm({ tournamentId, initial }: { tournamentId: string; ini
         </div>
       </section>
 
+      {/* Desempate */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold">Desempate (orden de criterios)</h3>
         <div className="flex flex-wrap gap-2">
-          {tiebreakerOptions.map((opt) => (
-            <label
-              key={opt.value}
-              className="flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1 text-sm"
-            >
-              <input
-                type="checkbox"
-                checked={tiebreakers.includes(opt.value)}
-                onChange={() =>
+          {tiebreakerOptions.map((opt) => {
+            const checked = tiebreakers.includes(opt.value);
+            return (
+              <div
+                key={opt.value}
+                onClick={() =>
                   setTiebreakers((prev) =>
-                    prev.includes(opt.value) ? prev.filter((v) => v !== opt.value) : [...prev, opt.value]
+                    prev.includes(opt.value)
+                      ? prev.filter((v) => v !== opt.value)
+                      : [...prev, opt.value]
                   )
                 }
-              />
-              {opt.label}
-            </label>
-          ))}
+                className={`flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors select-none ${
+                  checked
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "hover:bg-muted"
+                }`}
+              >
+                <Checkbox
+                  id={`tb-${opt.value}`}
+                  checked={checked}
+                  onCheckedChange={() =>
+                    setTiebreakers((prev) =>
+                      prev.includes(opt.value)
+                        ? prev.filter((v) => v !== opt.value)
+                        : [...prev, opt.value]
+                    )
+                  }
+                  className="pointer-events-none"
+                />
+                <span>{opt.label}</span>
+              </div>
+            );
+          })}
         </div>
       </section>
 
+      {/* Reglas disciplinarias */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold">Reglas disciplinarias</h3>
         <div className="flex flex-col gap-2">
