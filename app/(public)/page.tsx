@@ -76,10 +76,12 @@ export default async function LandingPage() {
                       </span>
                     )}
                   </div>
-                  {t.championTeam && (
+                  {t.categories.some(c => c.championTeam) && (
                     <div className="text-sm">
-                      <span className="text-muted-foreground">Campeón: </span>
-                      <span className="font-semibold">{t.championTeam.name}</span>
+                      <span className="text-muted-foreground">Campeones: </span>
+                      <span className="font-semibold">
+                        {t.categories.filter(c => c.championTeam).map(c => c.championTeam!.name).join(", ")}
+                      </span>
                     </div>
                   )}
                   <Button asChild variant="outline" size="sm" className="w-full">

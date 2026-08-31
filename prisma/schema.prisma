@@ -143,8 +143,6 @@ model Tournament {
   sport          Sport             @default(OTRO)
   ownerId        String
   owner          User              @relation("OwnerTournaments", fields: [ownerId], references: [id])
-  championTeamId String?
-  championTeam   Team?             @relation("ChampionTeam", fields: [championTeamId], references: [id], onDelete: SetNull)
   categories     Category[]
   matches        Match[]
   rules          TournamentRules?
@@ -191,7 +189,9 @@ model Category {
   type         CategoryType  @default(PERSONALIZADA)
   color        String?
   maxTeams     Int?
-  teams        Team[]
+  teams          Team[]
+  championTeamId String?
+  championTeam   Team?         @relation("CategoryChampion", fields: [championTeamId], references: [id], onDelete: SetNull)
   phases       Phase[]
   matches      Match[]
   order        Int           @default(0)
@@ -216,7 +216,7 @@ model Team {
   homeMatches  Match[]      @relation("HomeMatches")
   awayMatches  Match[]      @relation("AwayMatches")
   winnerMatches Match[]     @relation("MatchWinner")
-  championOfTournaments Tournament[] @relation("ChampionTeam")
+  championOfCategories Category[] @relation("CategoryChampion")
   groupMembers GroupTeam[]
   penaltyShots PenaltyShot[]
   events       MatchEvent[]

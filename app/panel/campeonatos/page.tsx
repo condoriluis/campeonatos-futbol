@@ -45,9 +45,9 @@ export default async function TournamentsPage() {
                   {(t as { city?: string | null }).city ?? (t as { venue?: string | null }).venue ?? "—"} ·{" "}
                   {(t._count?.categories ?? 0)} categorías
                 </p>
-                {t.championTeam && (
+                {t.categories?.some(c => c.championTeam) && (
                   <p className="text-sm">
-                    Campeón: <span className="font-semibold">{t.championTeam.name}</span>
+                    Campeones: <span className="font-semibold">{t.categories.filter(c => c.championTeam).map(c => c.championTeam!.name).join(", ")}</span>
                   </p>
                 )}
                 <Button asChild variant="outline" size="sm" className="w-full">

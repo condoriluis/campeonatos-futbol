@@ -525,8 +525,8 @@ async function setupDamas(categoryId: string, teams: Record<string, { id: string
         endedAt: new Date(Date.now() + 30 * 60 * 1000),
       },
     });
-    await prisma.tournament.update({
-      where: { id: tournament.id },
+    await prisma.category.update({
+      where: { id: categoryId },
       data: { championTeamId: winnerId },
     });
     await prisma.phase.update({ where: { id: finalPhase.id }, data: { status: "FINALIZADO" } });

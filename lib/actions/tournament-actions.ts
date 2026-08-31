@@ -15,7 +15,7 @@ export async function getTournamentsForUser() {
     where: ctx.role === "OPERADOR" ? {} : ctx.role === "ADMIN" ? {} : { ownerId: ctx.userId },
     include: {
       _count: { select: { categories: true } },
-      championTeam: { select: { id: true, name: true } },
+      categories: { include: { championTeam: { select: { id: true, name: true } } } },
       rules: { select: { id: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -30,11 +30,11 @@ export async function getTournamentBySlug(slug: string) {
       categories: {
         include: {
           _count: { select: { teams: true } },
+          championTeam: { select: { id: true, name: true, color: true, shieldUrl: true } }
         },
         orderBy: { order: "asc" },
       },
       rules: true,
-      championTeam: { select: { id: true, name: true, color: true, shieldUrl: true } },
       owner: { select: { id: true, name: true } },
     },
   });
@@ -50,7 +50,7 @@ export async function getPublicTournaments() {
     where: { status: { in: ["INSCRIPCION", "EN_PROGRESO", "FINALIZADO"] } },
     include: {
       _count: { select: { categories: true } },
-      championTeam: { select: { id: true, name: true, color: true, shieldUrl: true } },
+      categories: { include: { championTeam: { select: { id: true, name: true, color: true, shieldUrl: true } } } },
     },
     orderBy: { updatedAt: "desc" },
     take: 24,
@@ -180,20 +180,20 @@ export async function deleteTournament(id: string) {
   }
 }
 
-/** Asigna el campeón visible del torneo */
-export async function setTournamentChampion(id: string, championTeamId: string | null) {
+/** Asigna el campeón visible de la categoría */
+export async function setCategoryChampion(id: string, categoryId: string, championTeamId: string | null) {
   try {
     const { ctx } = await requireTournamentEditor(id);
-    const updated = await db.tournament.update({
-      where: { id },
+    const updated = await db.category.update({
+      where: { id: categoryId },
       data: { championTeamId },
     });
     await auditLog({
       userId: ctx.userId,
       tournamentId: id,
-      action: "TOURNAMENT_CHAMPION",
-      entity: "Tournament",
-      entityId: id,
+      action: "CATEGORY_CHAMPION",
+      entity: "Category",
+      entityId: categoryId,
       details: { championTeamId },
     });
     revalidatePath(`/panel/campeonatos/${id}`);

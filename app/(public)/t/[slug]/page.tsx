@@ -38,12 +38,19 @@ export default async function PublicTournamentPage({ params }: { params: Promise
             )}
             {tournament.city && <span>{tournament.city}</span>}
           </div>
-          {tournament.championTeam && (
-            <div className="bg-muted/40 flex items-center gap-3 rounded-xl border px-4 py-3">
-              <Trophy className="size-6 text-amber-500" />
-              <div>
-                <p className="text-xs text-muted-foreground">Campeón</p>
-                <p className="text-lg font-bold">{tournament.championTeam.name}</p>
+          {tournament.categories?.some(c => c.championTeam) && (
+            <div className="bg-muted/40 flex flex-col gap-2 rounded-xl border px-4 py-3">
+              <div className="flex items-center gap-2">
+                <Trophy className="size-5 text-amber-500" />
+                <p className="font-semibold text-sm">Campeones</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                {tournament.categories.filter(c => c.championTeam).map(c => (
+                  <div key={c.id} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{c.name}</span>
+                    <span className="font-bold">{c.championTeam!.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}

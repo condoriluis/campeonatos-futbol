@@ -73,9 +73,9 @@ export default async function DashboardPage() {
                       <StatusBadge status={t.status} />
                     </div>
                   </div>
-                  {t.championTeam && (
+                  {t.categories?.some(c => c.championTeam) && (
                     <p className="text-sm">
-                      Campeón: <span className="font-semibold">{t.championTeam.name}</span>
+                      Campeones: <span className="font-semibold">{t.categories.filter(c => c.championTeam).map(c => c.championTeam!.name).join(", ")}</span>
                     </p>
                   )}
                   <Button asChild variant="outline" size="sm" className="w-full">

@@ -224,14 +224,18 @@ async function maybeSetChampion(finalPhaseId: string, userId: string) {
         orderBy: { position: "desc" },
       });
       if (last && last.id === finalPhaseId) {
+        await db.category.update({
+          where: { id: phase.categoryId },
+          data: { championTeamId: finalMatch.winnerId },
+        });
         await db.tournament.update({
           where: { id: phase.category.tournamentId },
-          data: { championTeamId: finalMatch.winnerId, status: "FINALIZADO" },
+          data: { status: "FINALIZADO" },
         });
         await auditLog({
           userId,
           tournamentId: phase.category.tournamentId,
-          action: "TOURNAMENT_CHAMPION",
+          action: "CATEGORY_CHAMPION",
           entity: "Match",
           entityId: finalPhaseId,
           details: { championTeamId: finalMatch.winnerId },
